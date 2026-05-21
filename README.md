@@ -19,7 +19,7 @@ AI Agent Engineer focused on building intelligent automation systems, multi-agen
 </p>
 
 <p>
-⚡ Building real-world AI systems, automations, and intelligent workflows.
+⚡ Engineering intelligent systems that automate real-world business workflows.
 </p>
 
 <img align="right" width="380" src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" />
@@ -121,17 +121,14 @@ AI Agent Engineer focused on building intelligent automation systems, multi-agen
 <li>🚀 Building production-ready AI systems</li>
 </ul>
 
-<h2>📈 GitHub Stats</h2>
-
-<img src="https://github-readme-stats.vercel.app/api?username=your-github-username&show_icons=true&theme=tokyonight&count_private=true" alt="GitHub Stats" />
-
-<br><br>
-
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=your-github-username&theme=tokyonight" alt="GitHub Streak" />
-
-<br><br>
-
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=your-github-username&layout=compact&theme=tokyonight" alt="Top Languages" />
+<h2>🧠 Currently Exploring</h2>
+<ul>
+<li>Multi-Agent AI Systems</li>
+<li>Advanced Automation Architectures</li>
+<li>Scalable RAG Pipelines</li>
+<li>AI Infrastructure & LLM Routing</li>
+<li>Business Process Automation</li>
+</ul>
 
 <h2>⚡️ 2026 Goals</h2>
 
@@ -143,6 +140,4 @@ AI Agent Engineer focused on building intelligent automation systems, multi-agen
 <li>🌍 Build impactful real-world AI solutions</li>
 </ul>
 
-<p>
-<img src="https://komarev.com/ghpvc/?username=your-github-username&style=flat-square&color=blue" alt="Profile Views" />
-</p>
+
