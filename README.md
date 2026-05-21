@@ -26,7 +26,7 @@ AI Agent Engineer focused on building intelligent automation systems, multi-agen
   align="right" 
   alt="Coding GIF" 
   width="380" 
-  vspace="60"
+  vspace="80"
   src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" 
 />
 
