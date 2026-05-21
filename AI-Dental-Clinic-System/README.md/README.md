@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=00D9FF&center=true&vCenter=true&width=700&lines=🦷+AI+Dental+Clinic+System;Intelligent+Appointment+Automation;WhatsApp+%2B+AI+%2B+n8n+%2B+Supabase" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=00D9FF&center=true&vCenter=true&width=700&lines=%F0%9F%A6%B7+AI+Dental+Clinic+System;Intelligent+Appointment+Automation;WhatsApp+%2B+AI+%2B+n8n+%2B+Supabase" alt="Typing SVG" />
 <br/>
 <img src="https://img.shields.io/badge/Status-Production%20Ready-00D9FF?style=for-the-badge&logo=checkmarx&logoColor=white"/>
 <img src="https://img.shields.io/badge/Platform-n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white"/>
@@ -8,7 +8,7 @@
 <img src="https://img.shields.io/badge/Sync-Notion-000000?style=for-the-badge&logo=notion&logoColor=white"/>
 <br/><br/>
  
-<img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDlkMnUwbmZybzQxbGF0ZXA4djhvdnMzaWd2cTBiY3ExY3VzdGxlMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qgQUggAC3Pfv687qPC/giphy.gif" width="480" alt="AI System Animation"/>
+<img src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="460" alt="AI System Animation"/>
 <br/>
 > **A production-grade AI receptionist that handles clinic appointments end-to-end via WhatsApp — with zero human intervention.**
  
@@ -47,10 +47,10 @@ WhatsApp Message
     │         │              │
     ▼         ▼              ▼
 Supabase  Supabase       Supabase
-    │         │              │
-    ▼         ▼              ▼
- Notion   Notion        Clinic Info
-  Sync     Sync          Services
+    │         │
+    ▼         ▼
+ Notion   Notion
+  Sync     Sync
     │
     ▼
 WhatsApp Response ← AI-formatted reply sent back to patient
@@ -220,7 +220,7 @@ Notion Dashboard (Staff)
 | Layer | Technology |
 |---|---|
 | Workflow Engine | [n8n](https://n8n.io) |
-| AI Models | OpenRouter (GPT-4, GPT-5.1) |
+| AI Models | OpenRouter (GPT-4o, GPT-5.1) |
 | Database | [Supabase](https://supabase.com) (PostgreSQL) |
 | Admin Dashboard | [Notion](https://notion.so) |
 | Communication | WhatsApp Business API |
@@ -249,24 +249,45 @@ Notion Dashboard (Staff)
 ### Main Router
 ![Main Router](./assets/main-ai-router.png)
  
-### Booking — Available Slots
-![Slots](./assets/booking-get-available-slots.png)
+### Booking Workflows
  
-### Booking — Create Appointment
-![Booking](./assets/booking-create-appointment.png)
+<table>
+  <tr>
+    <td align="center"><b>Available Slots</b></td>
+    <td align="center"><b>Create Appointment</b></td>
+  </tr>
+  <tr>
+    <td><a href="./assets/booking-get-available-slots.png"><img src="./assets/booking-get-available-slots.png" width="420"/></a></td>
+    <td><a href="./assets/booking-create-appointment.png"><img src="./assets/booking-create-appointment.png" width="420"/></a></td>
+  </tr>
+</table>
+### Update Workflows
  
-### Simple Update
-![Simple Update](./assets/booking-update-simple.png)
- 
-### Critical Update
-![Critical Update](./assets/booking-update-critical.png)
- 
+<table>
+  <tr>
+    <td align="center"><b>Simple Update</b></td>
+    <td align="center"><b>Critical Update</b></td>
+  </tr>
+  <tr>
+    <td><a href="./assets/booking-update-simple.png"><img src="./assets/booking-update-simple.png" width="420"/></a></td>
+    <td><a href="./assets/booking-update-critical.png"><img src="./assets/booking-update-critical.png" width="420"/></a></td>
+  </tr>
+</table>
 ### Notion Sync Layer
 ![Sync](./assets/sync-notion-clinic-update.png)
  
-### Live WhatsApp Conversation
-![Chat](./assets/ai-agent-whatsapp-conversation-1.png)
+### Live WhatsApp Conversations
  
+<table>
+  <tr>
+    <td align="center"><b>Conversation 1</b></td>
+    <td align="center"><b>Conversation 2</b></td>
+  </tr>
+  <tr>
+    <td><a href="./assets/ai-agent-whatsapp-conversation-1.png"><img src="./assets/ai-agent-whatsapp-conversation-1.png" width="320"/></a></td>
+    <td><a href="./assets/ai-agent-whatsapp-conversation-2.png"><img src="./assets/ai-agent-whatsapp-conversation-2.png" width="320"/></a></td>
+  </tr>
+</table>
 ---
  
 ## ⚠️ Current Limitations
@@ -295,10 +316,13 @@ Everything else — routing logic, conflict detection, sync layer, AI agents —
 <img src="https://media.giphy.com/media/LnQjpWaON8nhr21vNW/giphy.gif" width="60"/>
 **Built with intention.**
  
-*"وَأَنْ لَيْسَ لِلْإِنْسَانِ إِلَّا مَا سَعَىٰ"*
+<br/><br/>
  
-<br/>
-[![LinkedIn](https://img.shields.io/badge/Omar%20Emad-LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/omar-emad-99a919326/)
-[![GitHub](https://img.shields.io/badge/GitHub-Profile-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/gxxzvb1005-creator)
- 
+<a href="https://www.linkedin.com/in/omar-emad-99a919326/">
+  <img src="https://img.shields.io/badge/Omar%20Emad-LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+</a>
+&nbsp;&nbsp;
+<a href="https://github.com/gxxzvb1005-creator">
+  <img src="https://img.shields.io/badge/GitHub-Profile-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+</a>
 </div>
