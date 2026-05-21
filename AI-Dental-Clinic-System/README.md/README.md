@@ -10,7 +10,7 @@
  
 <img src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="460" alt="AI System Animation"/>
 <br/>
-> **A production-grade AI receptionist that handles clinic appointments end-to-end via WhatsApp — with zero human intervention.**
+ **A production-grade AI receptionist that handles clinic appointments end-to-end via WhatsApp — with zero human intervention.**
  
 </div>
 ---
