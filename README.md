@@ -140,4 +140,16 @@ AI Agent Engineer focused on building intelligent automation systems, multi-agen
 <li>🌍 Build impactful real-world AI solutions</li>
 </ul>
 
+<h2>📖 A Verse I Keep Close</h2>
 
+<p align="center">
+  <strong>
+    وَأَنْ لَيْسَ لِلْإِنْسَانِ إِلَّا مَا سَعَىٰ
+    <br><br>
+    وَأَنَّ سَعْيَهُ سَوْفَ يُرَىٰ
+  </strong>
+</p>
+
+<p align="center">
+  <i>Surah An-Najm — 53:39-40</i>
+</p>
