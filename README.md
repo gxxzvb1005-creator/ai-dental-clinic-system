@@ -142,14 +142,11 @@ AI Agent Engineer focused on building intelligent automation systems, multi-agen
 
 <h2>📖 A Verse I Keep Close</h2>
 
-<p align="center">
-  <strong>
-    وَأَنْ لَيْسَ لِلْإِنْسَانِ إِلَّا مَا سَعَىٰ
-    <br><br>
-    وَأَنَّ سَعْيَهُ سَوْفَ يُرَىٰ
-  </strong>
-</p>
+<div align="center">
 
-<p align="center">
-  <i>Surah An-Najm — 53:39-40</i>
-</p>
+### وَأَنْ لَيْسَ لِلْإِنْسَانِ إِلَّا مَا سَعَىٰ  
+### وَأَنَّ سَعْيَهُ سَوْفَ يُرَىٰ
+
+<i>Surah An-Najm — 53:39-40</i>
+
+</div>
