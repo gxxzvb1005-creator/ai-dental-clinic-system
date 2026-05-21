@@ -1,4 +1,4 @@
-div align="center">
+<div align="center">
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=00D9FF&center=true&vCenter=true&width=700&lines=%F0%9F%A6%B7+AI+Dental+Clinic+System;Intelligent+Appointment+Automation;WhatsApp+%2B+AI+%2B+n8n+%2B+Supabase" alt="Typing SVG" />
 <br/>
 <img src="https://img.shields.io/badge/Status-Production%20Ready-00D9FF?style=for-the-badge&logo=checkmarx&logoColor=white"/>
