@@ -1,0 +1,363 @@
+{
+  "name": "Patient Appointment Check",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        -80
+      ],
+      "id": "97cf0e09-53c2-43ee-b889-3ab3ec8026fc",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "11c75e3f-bdef-46ab-83ec-a7ad988353ad",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        560,
+        -80
+      ],
+      "id": "9668e382-a370-404c-999f-5021c9db8c03",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d2c15d89-9c06-40bc-8192-cf79eff81c8b",
+              "name": "Customer data",
+              "value": "=Mobile number which is{{ $json.customer_phone }} He has a reservation today{{ $json.appointment_date }}\nFrom the hour{{ $json.start_time }} to{{ $json.start_time }}\n\nThe service provided is{{ $json.Service }}\n\n\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        976,
+        -96
+      ],
+      "id": "8f4fa251-448e-4526-b43f-24d60e69e0f0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d2c15d89-9c06-40bc-8192-cf79eff81c8b",
+              "name": "Customer data",
+              "value": "=No appointment number available.\n{{ $('When Executed by Another Workflow').item.json.query }}\nWe’re very sorry. Could you please confirm your mobile number? It’s possible the number was entered incorrectly",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1728,
+        208
+      ],
+      "id": "b88c2e46-e39a-4929-959e-0c23204aecfa",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "appointments",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "customer_phone",
+              "condition": "eq",
+              "keyValue": "={{ $json.query }}"
+            },
+            {
+              "keyName": "appointment_date",
+              "condition": "gte",
+              "keyValue": "={{$now}}"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "confirmed"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -80
+      ],
+      "id": "f087e1a1-3d39-42a8-9b68-e3c0de9815e1",
+      "name": "Get many rows",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "appointments",
+        "limit": 2,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "appointment_date",
+              "condition": "lte",
+              "keyValue": "={{ $now }}"
+            },
+            {
+              "keyName": "customer_phone",
+              "condition": "eq",
+              "keyValue": "={{ $('When Executed by Another Workflow').item.json.query }}"
+            },
+            {
+              "keyName": "status",
+              "condition": "neq",
+              "keyValue": "confirmed"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        912,
+        80
+      ],
+      "id": "0db643a6-3575-4f0c-bd53-f532b8a2abaa",
+      "name": "Get many rows1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "11c75e3f-bdef-46ab-83ec-a7ad988353ad",
+              "leftValue": "={{ $json.appointment.id }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "5db3b0cf-cbd7-45c8-abf5-442b0665feb0",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1424,
+        80
+      ],
+      "id": "daa6b7a0-e3ad-40ca-a48b-173c6c276579",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8d32acc6-71ef-4a39-825b-ee76d3d3d544",
+              "name": "Last_date",
+              "value": "=You had an old appointment on the day {{ $json.appointment.appointment_date }}\nAnd his condition {{ $('Get many rows1').item.json.status }}\n\nYou don’t have any upcoming appointments",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1744,
+        -16
+      ],
+      "id": "273950c7-ebee-4a33-986a-a4b5029fd0b4",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nif (items.length === 0) {\n  return [{ json: { found: false } }];\n}\n\nconst today = new Date();\ntoday.setHours(23, 59, 59, 999);\n\nconst appointments = items.map(item => ({\n  ...item.json,\n  _fullDatetime: new Date(`${item.json.appointment_date}T${item.json.start_time}`)\n}));\n\n// بس المواعيد اللي قبل النهاردة أو النهاردة\nconst past = appointments.filter(a => a._fullDatetime <= today);\n\nif (past.length === 0) {\n  return [{ json: { found: false } }];\n}\n\n// ترتيب تنازلي عشان أول واحد يكون الأحدث\npast.sort((a, b) => b._fullDatetime - a._fullDatetime);\n\nconst { _fullDatetime, ...appointment } = past[0];\nreturn [{ json: { found: true, appointment } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        80
+      ],
+      "id": "58debe58-119d-486f-bc75-9524d144a991",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "09a91f88-62c7-44ac-85bc-c63850bd8f30",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "90b6cb49899c99579264242ebcb5945915bcb7c494e1f1809bc138dacc79b617"
+  },
+  "id": "VDsjSxlB155E9sPR",
+  "tags": [
+    {
+      "updatedAt": "2026-05-14T03:44:22.767Z",
+      "createdAt": "2026-05-14T03:44:22.767Z",
+      "id": "RomUHSLwTs0vX1nd",
+      "name": "Clinic"
+    }
+  ]
+}
