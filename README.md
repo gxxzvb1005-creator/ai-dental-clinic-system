@@ -22,7 +22,13 @@ AI Agent Engineer focused on building intelligent automation systems, multi-agen
 ⚡ Engineering intelligent systems that automate real-world business workflows.
 </p>
 
-<img align="right" width="380" src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" />
+<img 
+  align="right" 
+  alt="Coding GIF" 
+  width="380" 
+  vspace="60"
+  src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" 
+/>
 
 <h2>⚡️ A Few Quick Facts</h2>
 
