@@ -79,49 +79,45 @@ The first AI brain in the system. Reads every incoming WhatsApp message and clas
 ### 2. 📅 Booking Agent
 **Files:** `booking-get-available-slots.json` + `booking-create-appointment.json`
  
-Handles the full booking flow in two stages:
- 
 **Stage 1 — Get Available Slots**
-- Checks `clinic_exceptions` table for holidays or clinic closures on that date
-- Checks `clinic_schedule` table to verify if the day is active (not a day off)
-- Fetches all existing appointments for that date from Supabase
+- Checks `clinic_exceptions` for holidays or closures
+- Verifies the day is active in `clinic_schedule`
+- Fetches all existing appointments for that date
 - Runs a JavaScript algorithm to calculate all **free time gaps** between bookings
 - Returns available slots to the AI agent
 **Stage 2 — Create Appointment**
 - Parses the customer's booking data (name, phone, email, date, time, service)
-- Validates the requested date against exceptions and schedule
-- Uses an **AI sub-agent** to fuzzy-match the service name (e.g., "teeth cleaning" → "تنظيف الأسنان")
-- Calculates `end_time` based on service duration fetched from Supabase
-- Validates requested time is within clinic working hours
-- Checks for **slot conflicts** — ensures no double booking
-- Creates the appointment in **Supabase** and syncs it to **Notion** in real time
+- Validates date against exceptions and schedule
+- Uses an **AI sub-agent** to fuzzy-match the service name
+- Calculates `end_time` based on service duration from Supabase
+- Validates requested time is within working hours
+- Checks for **slot conflicts** before writing
+- Creates the appointment in **Supabase** → syncs to **Notion**
 ---
  
 ### 3. ✏️ Update Agent
 **Files:** `booking-update-simple.json` + `booking-update-critical.json`
  
-Handles two types of updates with different logic:
- 
-**Simple Update** — name or phone number changes only
+**Simple Update** — name or phone number only
 - Loops over all requested field changes
-- Updates Supabase and syncs the change to the Notion dashboard
-**Critical Update** — appointment rescheduling or service change
-- Verifies the patient exists in the system using their phone number
-- Checks the new requested date against exceptions and clinic schedule
-- Uses an AI sub-agent to validate the requested service exists
-- Recalculates end time based on new service duration
-- Validates the new time slot is within working hours
-- Checks for conflicts before committing the update
-- Updates both **Supabase** and **Notion** atomically
+- Updates Supabase and syncs to Notion
+**Critical Update** — rescheduling or service change
+- Verifies patient exists by phone number
+- Checks new date against exceptions and schedule
+- AI sub-agent validates the requested service
+- Recalculates `end_time` based on new service duration
+- Validates new time slot is within working hours
+- Conflict check before committing
+- Updates **Supabase** and **Notion** atomically
 ---
  
 ### 4. 💬 General Info Agent
 **File:** `ai-main-router.json` (General branch)
  
-Answers any clinic-related question by querying:
-- `clinic_information` table — location, working hours, general details
-- `services` table — service list, descriptions, pricing
-Also handles personal appointment lookups — if a patient asks "when is my appointment?", the agent asks for their phone number and queries `appointments` directly.
+Answers clinic-related questions by querying:
+- `clinic_information` — location, working hours, general details
+- `services` — service list, descriptions, pricing
+Also handles personal appointment lookups when a patient asks "when is my appointment?"
  
 ---
  
@@ -232,83 +228,151 @@ Notion Dashboard (Staff)
  
 ## 🧩 Key Engineering Decisions
  
-**1. Confidence-gated routing** — The intent classifier only routes a message if confidence > 90%. Below that, the system asks the patient to clarify. This prevents wrong routing.
+**1. Confidence-gated routing** — The intent classifier only routes if confidence > 90%. Below that, the system asks the patient to clarify. This prevents wrong routing.
  
-**2. AI-powered service matching** — Instead of exact-match lookups, a dedicated AI sub-agent fuzzy-matches service names. So "teeth whitening", "تبييض الأسنان", and "whitening" all correctly resolve to the same service record.
+**2. AI-powered service matching** — A dedicated AI sub-agent fuzzy-matches service names. "Teeth whitening", "تبييض الأسنان", and "whitening" all resolve to the same service record.
  
-**3. Dual-write architecture** — Every write happens in Supabase first, then immediately syncs to Notion. This keeps Supabase as the source of truth while giving staff a human-readable interface.
+**3. Dual-write architecture** — Every write happens in Supabase first, then immediately syncs to Notion. Supabase is the source of truth; Notion is the staff interface.
  
-**4. Per-user conversation memory** — Each patient's conversation history is stored in PostgreSQL using n8n's Postgres Chat Memory node, keyed by their WhatsApp number. This makes multi-turn conversations work naturally.
+**4. Per-user conversation memory** — Each patient's conversation history is stored in PostgreSQL, keyed by their WhatsApp number. Multi-turn conversations work naturally.
  
-**5. Conflict detection before booking** — The system checks for exact slot conflicts using `start_time + end_time + appointment_date` before committing any booking or update. This prevents double-booking even under concurrent requests.
+**5. Conflict detection before booking** — The system checks `start_time + end_time + appointment_date` for conflicts before committing any booking or update. Prevents double-booking under concurrent requests.
  
 ---
  
 ## 🚀 System Visuals
  
-### Main Router
-![Main Router](./assets/main-ai-router.png)
+<h3>Main Router</h3>
  
-### Booking Workflows
+<a href="./assets/main-ai-router.png">
+  <img src="./assets/main-ai-router.png" width="860" alt="Main Router"/>
+</a>
+<br/><br/>
  
-<table>
-  <tr>
-    <td align="center"><b>Available Slots</b></td>
-    <td align="center"><b>Create Appointment</b></td>
-  </tr>
-  <tr>
-    <td><a href="./assets/booking-get-available-slots.png"><img src="./assets/booking-get-available-slots.png" width="420"/></a></td>
-    <td><a href="./assets/booking-create-appointment.png"><img src="./assets/booking-create-appointment.png" width="420"/></a></td>
-  </tr>
-</table>
-### Update Workflows
+<h3>Booking Workflows</h3>
  
 <table>
   <tr>
-    <td align="center"><b>Simple Update</b></td>
-    <td align="center"><b>Critical Update</b></td>
+    <th align="center">Available Slots</th>
+    <th align="center">Create Appointment</th>
   </tr>
   <tr>
-    <td><a href="./assets/booking-update-simple.png"><img src="./assets/booking-update-simple.png" width="420"/></a></td>
-    <td><a href="./assets/booking-update-critical.png"><img src="./assets/booking-update-critical.png" width="420"/></a></td>
+    <td align="center">
+      <a href="./assets/booking-get-available-slots.png">
+        <img src="./assets/booking-get-available-slots.png" width="420" alt="Available Slots"/>
+      </a>
+    </td>
+    <td align="center">
+      <a href="./assets/booking-create-appointment.png">
+        <img src="./assets/booking-create-appointment.png" width="420" alt="Create Appointment"/>
+      </a>
+    </td>
   </tr>
 </table>
-### Notion Sync Layer
-![Sync](./assets/sync-notion-clinic-update.png)
- 
-### Live WhatsApp Conversations
+<br/>
+<h3>Update Workflows</h3>
  
 <table>
   <tr>
-    <td align="center"><b>Conversation 1</b></td>
-    <td align="center"><b>Conversation 2</b></td>
+    <th align="center">Simple Update</th>
+    <th align="center">Critical Update</th>
   </tr>
   <tr>
-    <td><a href="./assets/ai-agent-whatsapp-conversation-1.png"><img src="./assets/ai-agent-whatsapp-conversation-1.png" width="320"/></a></td>
-    <td><a href="./assets/ai-agent-whatsapp-conversation-2.png"><img src="./assets/ai-agent-whatsapp-conversation-2.png" width="320"/></a></td>
+    <td align="center">
+      <a href="./assets/booking-update-simple.png">
+        <img src="./assets/booking-update-simple.png" width="420" alt="Simple Update"/>
+      </a>
+    </td>
+    <td align="center">
+      <a href="./assets/booking-update-critical.png">
+        <img src="./assets/booking-update-critical.png" width="420" alt="Critical Update"/>
+      </a>
+    </td>
   </tr>
 </table>
+<br/>
+<h3>Notion Sync Layer</h3>
+ 
+<a href="./assets/sync-notion-clinic-update.png">
+  <img src="./assets/sync-notion-clinic-update.png" width="860" alt="Notion Sync"/>
+</a>
+<br/><br/>
+ 
+<h3>Live WhatsApp Conversations</h3>
+ 
+<table>
+  <tr>
+    <th align="center">Conversation 1</th>
+    <th align="center">Conversation 2</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="./assets/ai-agent-whatsapp-conversation-1.png">
+        <img src="./assets/ai-agent-whatsapp-conversation-1.png" width="320" alt="WhatsApp Chat 1"/>
+      </a>
+    </td>
+    <td align="center">
+      <a href="./assets/ai-agent-whatsapp-conversation-2.png">
+        <img src="./assets/ai-agent-whatsapp-conversation-2.png" width="320" alt="WhatsApp Chat 2"/>
+      </a>
+    </td>
+  </tr>
+</table>
+---
+ 
+## 🛣️ Road to Full Production
+ 
+The system architecture is already production-grade. What remains is a set of targeted improvements across four layers:
+ 
+### 1. 🧠 Prompt Engineering
+The current prompts are functional but can be made significantly more robust:
+ 
+- **Stronger intent boundaries** — Add more edge-case examples to the classifier prompt to reduce misclassification on hybrid intents (e.g., "book + ask about price" in one message)
+- **Doctor's communication policy** — Inject the clinic's specific tone, greeting style, and terminology into every agent prompt. For example: how the assistant should refer to the doctor, how to handle sensitive patient concerns, what to say when cancellations happen
+- **Slot response formatting** — Standardize how the booking agent presents available times so the output is always clean and consistent regardless of how many slots exist
+- **Fallback hardening** — Improve the unclear-intent fallback to ask a smarter clarifying question based on partial context rather than a generic "could you clarify?"
+### 2. 🗄️ Data Layer
+Currently running on **demo data** — structured exactly like production but with test records:
+ 
+- Replace demo appointments, services, and clinic info with real clinic data in Supabase
+- Populate Notion databases with the actual doctor's schedule, real services and pricing, actual working hours, and real exception dates (holidays, vacations)
+- Add real `customer_email` handling if email confirmations are needed
+> The architecture does not change at all — only the data changes. Everything else stays the same.
+ 
+### 3. 🔐 Authentication & Confirmation
+Two missing safety layers:
+ 
+- **OTP / confirmation codes** — After a booking is created, send a confirmation code via WhatsApp. Patient must reply with the code to finalize. This prevents fake or accidental bookings
+- **Cancellation policy enforcement** — Add a rule that patients can only cancel/reschedule X hours before the appointment, based on the doctor's policy
+### 4. 📌 Workflow Accuracy Upgrades
+Several improvements were identified during development (marked as sticky notes in the workflows):
+ 
+- **Overlap detection improvement** — `booking-get-available-slots` currently returns slots based on exact start/end gaps. Adding a check for partial overlaps (e.g., a 30-min appointment that starts 15 min into a gap) would make the slot logic bulletproof
+- **Specific time vs. full-day check** — When a patient asks "is 3 PM free?" vs. "what slots are available on Saturday?", the system currently handles both the same way. Splitting these into two separate paths would make responses faster and more precise
+- **Race condition protection** — `booking-create-appointment` has a final conflict check, but under simultaneous requests a race condition is still theoretically possible. A database-level row lock or a short transaction window would eliminate this fully
 ---
  
 ## ⚠️ Current Limitations
  
-- Uses demo/test data — not connected to a live clinic
-- No patient authentication layer (e.g., OTP confirmation)
-- No appointment reminder system (SMS/WhatsApp reminders 24h before)
-- Prompt layer can be further hardened for edge cases in production
+- Running on demo data — swap to real clinic data to go live
+- No OTP or booking confirmation code
+- No appointment reminder system (24h before reminders via WhatsApp)
+- Prompt layer not yet tuned to the doctor's specific communication style
 ---
  
-## 🔧 Production Readiness
- 
-The architecture is production-ready. To go live, only three layers need to be swapped:
+## 🔧 Production Checklist
  
 ```
-1. Data layer     → Replace demo data with real clinic data
-2. Auth layer     → Add OTP or confirmation code system
-3. Deploy layer   → Host n8n on a VPS or cloud instance
+[ ] Replace demo data with real clinic data in Supabase + Notion
+[ ] Tune agent prompts to match doctor's communication style
+[ ] Add OTP confirmation flow after booking
+[ ] Add cancellation policy enforcement (time window before appointment)
+[ ] Split slot-check logic: full-day availability vs. specific time check
+[ ] Add partial overlap detection in available-slots workflow
+[ ] Host n8n on VPS or cloud (e.g., Railway, Render, or self-hosted)
+[ ] Connect to live WhatsApp Business API number
+[ ] Set up monitoring and error alerts for failed workflow executions
 ```
- 
-Everything else — routing logic, conflict detection, sync layer, AI agents — is already built for production scale.
  
 ---
  
