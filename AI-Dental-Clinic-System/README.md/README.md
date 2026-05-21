@@ -244,8 +244,8 @@ Notion Dashboard (Staff)
  
 <h3>Main Router</h3>
  
-<a href="./assets/main-ai-router.png">
-  <img src="./assets/main-ai-router.png" width="860" alt="Main Router"/>
+<a href="./assets/main-router.png">
+  <img src="./assets/main-router.png" width="860" alt="Main Router"/>
 </a>
 <br/><br/>
  
@@ -307,13 +307,13 @@ Notion Dashboard (Staff)
   </tr>
   <tr>
     <td align="center">
-      <a href="./assets/ai-agent-whatsapp-conversation-1.png">
-        <img src="./assets/ai-agent-whatsapp-conversation-1.png" width="320" alt="WhatsApp Chat 1"/>
+      <a href="./assets/system-test-01-initial-chat.jpg">
+        <img src="./assets/system-test-01-initial-chat.jpg" width="320" alt="WhatsApp Chat 1"/>
       </a>
     </td>
     <td align="center">
-      <a href="./assets/ai-agent-whatsapp-conversation-2.png">
-        <img src="./assets/ai-agent-whatsapp-conversation-2.png" width="320" alt="WhatsApp Chat 2"/>
+      <a href="./assets/system-test-02-response-flow.jpg">
+        <img src="./assets/system-test-02-response-flow.jpg" width="320" alt="WhatsApp Chat 2"/>
       </a>
     </td>
   </tr>
@@ -390,3 +390,4 @@ Several improvements were identified during development (marked as sticky notes 
   <img src="https://img.shields.io/badge/GitHub-Profile-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
 </a>
 </div>
+ 
