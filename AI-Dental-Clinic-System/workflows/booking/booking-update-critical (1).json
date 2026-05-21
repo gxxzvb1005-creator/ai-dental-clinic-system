@@ -1,0 +1,1105 @@
+{
+  "name": "booking-update-critical",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -720,
+        -96
+      ],
+      "id": "c3af9f78-4d72-4643-8c66-a2b1d0bb71b1",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const parsed = JSON.parse(item.json.query);\n\n  return {\n    json: {\n      phone_number: parsed.phone_number,\n      requested_day: parsed.appointment_context.requested_day,\n      requested_date: parsed.appointment_context.requested_date,\n      requested_time: parsed.appointment_context.requested_time,\n      requested_service: parsed.appointment_context.requested_service,\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        -96
+      ],
+      "id": "0e276525-8959-44d0-ac71-500aa7d3cea5",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "appointments",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "customer_phone",
+              "keyValue": "={{ $json.phone_number }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        -96
+      ],
+      "id": "b681dbbd-cf79-45eb-83f7-067bc7c0be76",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0e4069f2-21bf-4024-867c-955d05e2f843",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -96,
+        -96
+      ],
+      "id": "3d6e1bca-b8cb-4be7-ad2f-de9e47a6d38e",
+      "name": "If",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinic_exceptions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "exception_date",
+              "keyValue": "=2026-01-01"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -144
+      ],
+      "id": "e160871a-d649-4332-bde9-5ebbdef06740",
+      "name": "Get a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "89206c0c-0fe3-40e4-9b13-ceffa571b4c7",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        496,
+        -144
+      ],
+      "id": "105b08ca-a33f-4bb7-a856-7eb14d80cf21",
+      "name": "If1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35f6df85-9555-411d-8139-196b6551601e",
+              "name": "Exception",
+              "value": "=This date {{ $json.exception_date }} You should be an exception {{ $json.reason }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        -336
+      ],
+      "id": "789c9365-da18-4c7b-b86c-5bb0326fea0e",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinic_schedule",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "day_of_week",
+              "keyValue": "={{ $('Code in JavaScript').item.json.requested_day }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -160
+      ],
+      "id": "039d3a1b-9a95-45d1-8492-fd96cb4c20c8",
+      "name": "Get a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a96d5cce-05c6-4588-a4a9-c6db033eb649",
+              "leftValue": "={{ $json.active }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1088,
+        -160
+      ],
+      "id": "537e57f6-171f-407d-a6c7-35a539152f03",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6861e5a2-79e3-4ab0-bcb6-3a673250050c",
+              "name": "Day-off",
+              "value": "=The day you’d like to reschedule the appointment {{ $('Code in JavaScript').item.json.requested_day }} This is already a holiday for the clinic.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1296,
+        32
+      ],
+      "id": "c04d7def-9cfe-41f0-8d4c-de143c32b11a",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Code in JavaScript').item.json.requested_service }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI Agent connected to a Supabase tool called \"GetService\".\n\nYour task:\n- The user will send a service name.\n- Use the \"GetService\" tool to search for this service in Supabase.\n- Compare the user input with the available service names intelligently, even if the wording is slightly different.\n- If the service exists, return:\n  - The exact service name as written in Supabase.\n  - status: \"Available\"\n\n- If the service does not exist, return:\n  - status: \"Not Available\"\n\nIMPORTANT:\n- Always return valid JSON only.\n- Do not return explanations or extra text.\n\nResponse format if service exists:\n{\n  \"service_name\": \"تنظيف الأسنان\",\n  \"status\": \"Available\"\n}\n\nResponse format if service does not exist:\n{\n  \"status\": \"Not Available\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1376,
+        -176
+      ],
+      "id": "19a741e4-3206-4f47-abe0-470ff0bd8ed5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "services",
+        "filters": {
+          "conditions": []
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        256
+      ],
+      "id": "802633ba-5f91-4c22-95eb-57caa4bd592b",
+      "name": "Get many rows in Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        224
+      ],
+      "id": "47834faf-9326-4630-8b13-e0dec7b334a2",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "UwVB4Wq6ze3lQRck",
+          "name": "OpenRouter account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"service_name\": \"تنظيف الأسنان\",\n  \"status\": \"Available\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1920,
+        272
+      ],
+      "id": "5652127e-8bfd-44f1-88d0-426002473c2f",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "const triggerData = JSON.parse($('When Executed by Another Workflow').first().json.query);\nconst appointmentTime = triggerData.appointment_context.requested_time;\nconst durationMinutes = $('Get a row3').first().json.duration_minutes;\n\nfunction parseTimeTo24h(timeStr) {\n  timeStr = timeStr.trim();\n  const isPM = /pm/i.test(timeStr);\n  const isAM = /am/i.test(timeStr);\n  const clean = timeStr.replace(/[apm\\s]/gi, '');\n  let [h, m] = clean.split(':').map(Number);\n  if (isPM && h !== 12) h += 12;\n  if (isAM && h === 12) h = 0;\n  return { h, m };\n}\n\nconst { h, m } = parseTimeTo24h(appointmentTime);\n\nconst totalMinutes = h * 60 + m + durationMinutes;\nconst endH = Math.floor(totalMinutes / 60) % 24;\nconst endM = totalMinutes % 60;\n\nfunction to12h(hours, mins) {\n  const period = hours >= 12 ? 'PM' : 'AM';\n  const h12 = hours % 12 || 12;\n  return `${h12}:${String(mins).padStart(2, '0')} ${period}`;\n}\n\nreturn [{\n  json: {\n    appointment_start: appointmentTime,\n    appointment_end_24h: `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`,\n    appointment_end_12h: to12h(endH, endM),\n    duration_minutes: durationMinutes\n  }\n}];;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2352,
+        -192
+      ],
+      "id": "f2fef311-3a3b-4d1f-aa11-304ae274c2cb",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "services",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "service_name",
+              "keyValue": "={{ $json.output.service_name }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        -192
+      ],
+      "id": "88f04692-7e3a-4d2a-bb88-5fed4ce54375",
+      "name": "Get a row3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "50dccf5d-eee0-4b24-a60d-829f1f116cb7",
+              "leftValue": "={{ $json.output.status }}",
+              "rightValue": "Available",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1728,
+        -176
+      ],
+      "id": "26604d3e-87da-4466-9e20-170832f34864",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc25982a-44d5-460f-9ea2-5e40909b3479",
+              "name": "service",
+              "value": "The service you referred us to change to doesn’t exist in the first place.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2032,
+        32
+      ],
+      "id": "9563f124-0761-46e4-99b9-b062d9245913",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const appointmentStart24 = $('Code in JavaScript1').first().json.appointment_end_24h;\nconst appointmentStartOrig = $('Code in JavaScript1').first().json.appointment_start;\nconst appointmentEnd24 = $('Code in JavaScript1').first().json.appointment_end_24h;\n\n// جيب مواعيد العمل من Get a row2\nconst workStart = $('Get a row2').first().json.start_time; // \"09:00:00\"\nconst workEnd = $('Get a row2').first().json.end_time;     // \"17:00:00\"\n\n// حوّل كل الأوقات لدقائق عشان المقارنة تبقى سهلة\nfunction timeToMinutes(timeStr) {\n  // يشتغل مع \"HH:MM:SS\" و \"HH:MM\"\n  const parts = timeStr.split(':').map(Number);\n  return parts[0] * 60 + parts[1];\n}\n\nfunction parse12hToMinutes(timeStr) {\n  timeStr = timeStr.trim();\n  const isPM = /pm/i.test(timeStr);\n  const isAM = /am/i.test(timeStr);\n  const clean = timeStr.replace(/[apm\\s]/gi, '');\n  let [h, m] = clean.split(':').map(Number);\n  if (isPM && h !== 12) h += 12;\n  if (isAM && h === 12) h = 0;\n  return h * 60 + m;\n}\n\nconst startMinutes = parse12hToMinutes(appointmentStartOrig);\nconst endMinutes   = timeToMinutes(appointmentEnd24);\nconst workStartMin = timeToMinutes(workStart);\nconst workEndMin   = timeToMinutes(workEnd);\n\nconst isAvailable = startMinutes >= workStartMin && endMinutes <= workEndMin;\n\nreturn [{\n  json: {\n    appointment_start: appointmentStartOrig,\n    appointment_end: $('Code in JavaScript1').first().json.appointment_end_12h,\n    work_hours: `${workStart.slice(0,5)} - ${workEnd.slice(0,5)}`,\n    status: isAvailable ? 'available' : 'not available'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        -192
+      ],
+      "id": "23be54e8-2b81-4759-91c7-56a80b8079fb",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "not available",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f0befc1a-c76c-4a56-92d8-8c8911404870"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": " not available"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "166d9efa-6c1a-4536-9127-d89580bccb01",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "available",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "available"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2816,
+        -192
+      ],
+      "id": "c6dd69fd-d655-4953-abcc-0a286f51e931",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "97f97d2a-fee7-4b9f-b7f7-89fc9616c936",
+              "name": "Out of scope for this workflow",
+              "value": "=The appointment time you attached is outside our business hours, because our business hours are from {{ $json.work_hours }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3072,
+        -336
+      ],
+      "id": "af05ba0a-a8cc-4b12-a802-dc9cd7407762",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "appointments",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "appointment_date",
+              "condition": "eq",
+              "keyValue": "={{ $('Code in JavaScript').item.json.requested_date }}"
+            },
+            {
+              "keyName": "start_time",
+              "condition": "eq",
+              "keyValue": "={{ $json.appointment_start }}"
+            },
+            {
+              "keyName": "end_time",
+              "condition": "eq",
+              "keyValue": "={{ $json.appointment_end }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3200,
+        -176
+      ],
+      "id": "c9e4ecac-33b1-496f-a10d-895a05001870",
+      "name": "Get many rows",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4d63bbfe-d6e2-4f29-810d-e6a5af5d84f9",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3488,
+        -176
+      ],
+      "id": "ea4ce074-fbb4-4cc3-b7d5-a281dc72771a",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "appointments",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Get a row').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "appointment_date",
+              "fieldValue": "={{ $('Code in JavaScript').item.json.requested_date }}"
+            },
+            {
+              "fieldId": "start_time",
+              "fieldValue": "={{ $('Code in JavaScript2').item.json.appointment_start }}"
+            },
+            {
+              "fieldId": "end_time",
+              "fieldValue": "={{ $('Code in JavaScript2').item.json.appointment_end }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3840,
+        -64
+      ],
+      "id": "3e0d61c3-eea5-4e37-85ad-18446f2a42c6",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "36063761-caa3-8018-b772-cc726fb8e910",
+          "mode": "list",
+          "cachedResultName": "Appointment",
+          "cachedResultUrl": "https://www.notion.so/36063761caa38018b772cc726fb8e910"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "key": "Phone|phone_number",
+              "condition": "equals",
+              "phoneNumberValue": "={{ $json.customer_phone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        4048,
+        -64
+      ],
+      "id": "b3ab5164-54f4-4ad6-be8b-c7faface6245",
+      "name": "Get many database pages",
+      "credentials": {
+        "notionApi": {
+          "id": "KdxHZXDSeMFuu1Ew",
+          "name": "Notion account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "date|date",
+              "date": "={{ $('Code in JavaScript').item.json.requested_date }}",
+              "timezone": "Africa/Cairo"
+            },
+            {
+              "key": "start-time|rich_text",
+              "textContent": "={{ $('Update a row').item.json.start_time }}"
+            },
+            {
+              "key": "end-time|rich_text",
+              "textContent": "={{ $('Update a row').item.json.end_time }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        4304,
+        -48
+      ],
+      "id": "e64f7c45-ff05-4a4c-b646-4010f5d9f388",
+      "name": "Update a database page",
+      "credentials": {
+        "notionApi": {
+          "id": "KdxHZXDSeMFuu1Ew",
+          "name": "Notion account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1387a8de-0536-4333-a0ed-87a9385026ea",
+              "name": "Booking is busy",
+              "value": "=The booking you’re trying to make already has someone booked on it, so it’s unavailable",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3792,
+        -352
+      ],
+      "id": "a6cd7635-69e2-46e0-bc32-a9f63b8fa724",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "content": "## Note: In this area, there could be an overlap, so we make sure to account for possible schedule conflicts here.",
+        "height": 272,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3312,
+        -32
+      ],
+      "typeVersion": 1,
+      "id": "d1f818e0-6a81-4901-b714-8b3fea842a4d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e75446e9-00f0-450a-8958-81fae5fcae60",
+              "name": "problem",
+              "value": "=What is this number you attached {{ $('Get a row').item.json.customer_phone }} There is no booking associated with this number in the first place",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        128
+      ],
+      "id": "c3698ba2-d448-4bc4-bf15-96e96b8af702",
+      "name": "Edit Fields6"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "{\"phone_number\":\"011223344\",\"appointment_context\":{\"requested_day\":\"Tuesday\",\"requested_date\":\"2026-05-19\",\"requested_time\":\"2:30 PM\",\"requested_service\":\"حشو أسنان\"}}"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get a row1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows in Supabase": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Get a row3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "Get many database pages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many database pages": {
+      "main": [
+        [
+          {
+            "node": "Update a database page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ce3df0eb-1583-4f44-a16f-ab41f324f0c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "90b6cb49899c99579264242ebcb5945915bcb7c494e1f1809bc138dacc79b617"
+  },
+  "id": "yhsH9kZOCACG2Zfm",
+  "tags": [
+    {
+      "updatedAt": "2026-05-14T03:44:22.767Z",
+      "createdAt": "2026-05-14T03:44:22.767Z",
+      "id": "RomUHSLwTs0vX1nd",
+      "name": "Clinic"
+    }
+  ]
+}

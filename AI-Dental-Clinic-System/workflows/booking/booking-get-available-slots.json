@@ -1,0 +1,517 @@
+{
+  "name": "booking-get-available-slots",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -256,
+        -48
+      ],
+      "id": "378aa1dd-bc37-485d-a847-eaa74e0dd185",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst parsed = JSON.parse(item.json.query);\n\nparsed.day_name = parsed.day_name.charAt(0).toUpperCase() + parsed.day_name.slice(1);\n\nreturn [{ json: parsed }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        -48
+      ],
+      "id": "26589f96-e67b-4666-abb5-775f1dbd0c87",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinic_schedule",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "day_of_week",
+              "keyValue": "={{ $('Code in JavaScript').item.json.day_name }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        624,
+        -32
+      ],
+      "id": "f1cc002b-9e5d-4e25-ad19-87ba577f3b4d",
+      "name": "Get a row1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "appointments",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "appointment_date",
+              "condition": "eq",
+              "keyValue": "=2026-05-14"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -48
+      ],
+      "id": "8856ec07-d565-4182-b53f-48177ee5a310",
+      "name": "Get many rows",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2b5fcfc0-8967-4bc7-ba4c-930175507533",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": null,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1328,
+        -48
+      ],
+      "id": "7f9e9ffa-b606-4916-a663-54a404f2dfcc",
+      "name": "If3",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "222fc460-2497-4721-ae39-ef717ea00987",
+              "name": "Text",
+              "value": "=The day that corresponds to {{ $('Code in JavaScript').item.json.day_name }} By date {{ $('Code in JavaScript').item.json.date }} All available time slots from {{ $('Get a row1').item.json.start_time }} To {{ $('Get a row1').item.json.end_time }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1712,
+        80
+      ],
+      "id": "d1370d3b-89ed-4611-a1f8-f360f92788c8",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const schedule = $('Get a row1').first().json;\nconst workStart = schedule.start_time;\nconst workEnd = schedule.end_time;\n\nconst appointments = $('Get many rows').all().map(item => ({\n  start: item.json.start_time,\n  end: item.json.end_time\n}));\n\nfunction toMinutes(timeStr) {\n  const [h, m] = timeStr.split(':').map(Number);\n  return h * 60 + m;\n}\n\nfunction toTimeStr(minutes) {\n  const h = Math.floor(minutes / 60);\n  const m = minutes % 60;\n  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;\n}\n\nconst workStartMin = toMinutes(workStart);\nconst workEndMin = toMinutes(workEnd);\n\n// رتب الحجوزات من الأقدم للأحدث\nconst booked = appointments\n  .map(a => ({ start: toMinutes(a.start), end: toMinutes(a.end) }))\n  .sort((a, b) => a.start - b.start);\n\n// اوجد الفراغات\nconst available = [];\nlet cursor = workStartMin;\n\nfor (const booking of booked) {\n  if (cursor < booking.start) {\n    available.push({ start: toTimeStr(cursor), end: toTimeStr(booking.start) });\n  }\n  cursor = Math.max(cursor, booking.end);\n}\n\n// الفراغ بعد آخر حجز لحد نهاية الدوام\nif (cursor < workEndMin) {\n  available.push({ start: toTimeStr(cursor), end: toTimeStr(workEndMin) });\n}\n\nreturn available.map(slot => ({ json: slot }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1712,
+        -144
+      ],
+      "id": "c8f2e853-7a29-42c9-8dc6-caf04f6338e9",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "87b31e0f-04e2-40be-90f9-657296a9f241",
+              "name": "Available time slots.",
+              "value": "=It starts fromn :{{ $json.start }}\n\nend :{{ $json.end }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1936,
+        -144
+      ],
+      "id": "06e16a93-9511-4af6-8024-cce32e38497a",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinic_exceptions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "exception_date",
+              "keyValue": "={{ $json.date }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        144,
+        -48
+      ],
+      "id": "d2427c48-408d-4f49-ac1a-865d5cbc1746",
+      "name": "Get a row2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "79326c45-e756-40c9-8e37-fbbc29ed21da",
+              "leftValue": "={{ $json.notion_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        336,
+        -48
+      ],
+      "id": "177281bf-1b97-4700-aef1-e76f0243f104",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f0ec3211-44f9-41f9-b591-a21bfae5d692",
+              "name": "Execution day",
+              "value": "=This day {{ $json.exception_date }} There’s an exception because of it :{{ $json.reason }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        -240
+      ],
+      "id": "28f4acbf-614b-44e0-9b27-3ebadf504eda",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6bf27ad3-7241-41b6-bf66-6aa7be3b50f7",
+              "leftValue": "={{ $json.active }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        -32
+      ],
+      "id": "5bac56d0-ac85-42cb-ae2f-5d660c2989a2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "66f37182-ed15-4d67-9b7e-525874311390",
+              "name": "A day off",
+              "value": "=The day that corresponds to that day {{ $json.day_of_week }} Now, we own my agenda",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        256
+      ],
+      "id": "998d2250-bedd-4386-893b-01caf4c1e589",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "## There will be an if condition here related to whether the time the customer provided falls within working hours or not.",
+        "height": 288,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        704,
+        112
+      ],
+      "typeVersion": 1,
+      "id": "a6dc9cbf-e309-46ff-9bd5-5ff57be698df",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## There will also be an if condition here to check whether the client asked for a specific day, in which case we return all available time slots for that day, or asked for a specific time, in which case we return only one row for the time they specified.",
+        "height": 512,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1216,
+        -544
+      ],
+      "typeVersion": 1,
+      "id": "532def83-ff51-4912-b5a3-8f84e46848ce",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Okay, this system is scalable because it’s built on a logic-driven system.",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -192,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "5f3c8723-fc7b-4fb8-a349-19bfdabdff62",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Get a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row2": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a4ea5985-b8aa-45c0-b13f-8f915f56530e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "90b6cb49899c99579264242ebcb5945915bcb7c494e1f1809bc138dacc79b617"
+  },
+  "id": "RJyAVBzJA7GQF8Vl",
+  "tags": [
+    {
+      "updatedAt": "2026-05-14T03:44:22.767Z",
+      "createdAt": "2026-05-14T03:44:22.767Z",
+      "id": "RomUHSLwTs0vX1nd",
+      "name": "Clinic"
+    }
+  ]
+}

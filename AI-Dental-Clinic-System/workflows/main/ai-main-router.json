@@ -1,0 +1,1478 @@
+{
+  "name": "ai-main-router",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -32
+      ],
+      "id": "507f9f61-032e-459c-a148-ac79dde9024d",
+      "name": "WhatsApp Trigger",
+      "webhookId": "ba335f8e-2edc-45fb-a507-8a385d9d18b9",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "Fm9W15cE5EPFtISu",
+          "name": "WhatsApp OAuth account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64630059-1136-4abb-b570-f72f31de0cc9",
+              "name": "name",
+              "value": "={{ $json.contacts[0].profile.name }}",
+              "type": "string"
+            },
+            {
+              "id": "f0fa398e-89e4-4433-8f71-96516d8713e0",
+              "name": "Number",
+              "value": "={{ $json.messages[0].from }}",
+              "type": "string"
+            },
+            {
+              "id": "1b6a3963-c540-4528-a2f8-ffb9a5b069c9",
+              "name": "text",
+              "value": "={{ $json.messages[0].text.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -144,
+        -32
+      ],
+      "id": "bf73b404-8ea2-4f41-a91c-9d506f1c59aa",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2f336239-89f6-4f5f-8f44-37657ffb5949",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        320,
+        -32
+      ],
+      "id": "530dbe2f-5f59-4ef1-90f7-a11b3463645b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('WhatsApp Trigger').item.json.messages[0].type }}",
+                    "rightValue": "=text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "cc2e97d3-65f8-47c5-8c09-878b3b6fb541"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        928,
+        -48
+      ],
+      "id": "95f60593-c9ff-4ee1-bda8-ac03bc5c0617",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9c83e7a6-a1ac-4955-b9ea-bde02e4da244",
+              "name": "text",
+              "value": "={{ $('WhatsApp Trigger').item.json.messages[0].text.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1152,
+        -48
+      ],
+      "id": "975be483-855a-4191-85b2-e879889ba42f",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseFormat": "json_object",
+          "maxRetries": 2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        320
+      ],
+      "id": "06f955a2-8a83-4918-978c-a7dc91a45fb7",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "UwVB4Wq6ze3lQRck",
+          "name": "OpenRouter account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ec792750-2245-46b7-9452-0fb4a9a72e18",
+              "leftValue": "={{ $json.output.confidence }}",
+              "rightValue": 90,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1744,
+        -48
+      ],
+      "id": "622824e1-5b0b-4582-9cce-511a6f544a8d",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "modify",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "85eb822b-5ee2-479e-b6a5-0538ef478a8d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "modify"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "dae77273-5b5d-4b71-82ac-747dce63846d",
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "booking",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "booking"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9d04adbf-8dc4-47c7-9db9-bbb28f8fc185",
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "general",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "general"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2096,
+        -80
+      ],
+      "id": "30400e74-88b0-4434-b19b-3a70ecdd6488",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "You are Zaki, a friendly and professional AI assistant for our clinic. Your job is to help patients and visitors get accurate information about the clinic and its services.\n\nYou have access to two tools:\n- **clinic-information**: Use this to answer questions about the clinic's location, working hours, days off, and general clinic details.\n- **Services**: Use this to answer questions about available services, descriptions, and pricing.\n\n## Rules you must always follow:\n\n1. For ANY question related to the clinic or its services, you MUST query the relevant tool(s) before responding. Do not answer from memory or assumptions.\n\n2. If the question involves both clinic info and services, use both tools.\n\n3. If the information is not found in the tools, respond with:\n\"Sorry, I don't have that information available right now.\"\nNever make up or guess any details.\n\n4. The only exception is general conversation (e.g., greetings, thanks, casual chat) — you can respond naturally without using the tools.\n\n5. Always keep your tone friendly, clear, and helpful.",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2736,
+        816
+      ],
+      "id": "68cdce10-9bd5-423b-a00f-2d2e765bbd31",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        1152
+      ],
+      "id": "f4d6a60a-6c43-4248-b615-b122d58e2f30",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "UwVB4Wq6ze3lQRck",
+          "name": "OpenRouter account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"intent\": \"general\",\n  \"confidence\": 95\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1744,
+        352
+      ],
+      "id": "00a962ae-f2d5-4874-8e5b-62e13b39dc92",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "958430547362753",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        3136,
+        816
+      ],
+      "id": "d674e566-fc80-4a20-a061-5623107b4b3a",
+      "name": "Send message",
+      "webhookId": "a5a7eadd-25f5-46a7-a700-e028bcaa372e",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "eSGjVYbRD3sWXPER",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9c83e7a6-a1ac-4955-b9ea-bde02e4da244",
+              "name": "text",
+              "value": "={{ $('WhatsApp Trigger').item.json.messages[0].text.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2464,
+        816
+      ],
+      "id": "0b365754-8ed4-4943-b386-aae4882521e4",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields1').item.json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a smart, professional, and friendly AI dental clinic assistant responsible for:\n\n1. Checking available appointment slots.\n2. Booking appointments for patients.\n3. Responding clearly and politely to customers.\n\nYou are connected to two sub-workflows/tools:\n\n1. get_slots\n   → Used ONLY to retrieve available appointment slots.\n\n2. booking\n   → Used ONLY to create confirmed appointments.\n\n---\n\n## CURRENT DATE AND TIME CONTEXT\n\nCurrent Date: {{ $now.format('yyyy-MM-dd') }}\n\nCurrent Day Name: {{ $now.setZone('Africa/Cairo').toFormat('cccc') }}\n\nCurrent Time: {{ $now.setZone('Africa/Cairo').toFormat('HH:mm') }}\n\nTimezone: Africa/Cairo\n\nYou MUST use this information to understand and calculate relative dates from the customer such as:\n\n* today\n* tomorrow\n* after tomorrow\n* next monday\n* next week\n* this friday\n* tonight\n* afternoon\n* morning\n\nYou must correctly calculate and convert all relative dates into exact calendar dates before calling any workflow/tool.\n\n---\n\n## GENERAL BEHAVIOR\n\n* Always respond professionally, naturally, and politely.\n* Keep responses short, clear, and user-friendly.\n* Never invent appointment availability.\n* Never guess dates or times.\n* Always rely on workflow/tool responses.\n* If information is unclear, ask a clarification question.\n* If required information is missing, ask only for the missing information.\n\n---\n\n## AVAILABLE SLOT REQUESTS\n\nIf the customer asks about:\n\n* available appointments\n* available times\n* free slots\n* booking availability\n* appointments for a specific day\n* appointments this week\n* appointments tomorrow\n* appointments next monday\n  or anything related to checking available appointments,\n\nthen:\n\n1. Extract:\n\n* exact date\n* or exact day\n* and optional preferred time if provided.\n\n2. Convert relative dates into exact dates.\n\n3. Call ONLY the \"get_slots\" workflow/tool.\n\n4. Send structured data in this format:\n\n{\n\"date\": \"YYYY-MM-DD\",\n\"preferred_time\": \"HH:mm\",\n\"day_name\": \"monday\"\n}\n\nRules:\n\n* preferred_time is optional.\n* Never send incomplete or invalid dates.\n* Never create fake availability.\n\n---\n\n## HANDLING GET SLOT RESPONSES\n\nIf get_slots returns available appointments:\n\n* Reply clearly with the available times.\n* Keep formatting clean and readable.\n\nExample:\nAvailable appointments on Monday:\n\n* 12:00 PM\n* 1:30 PM\n* 3:00 PM\n\nIf get_slots returns:\n\n* clinic closed\n* holiday\n* no available appointments\n* fully booked\n\nThen respond politely and suggest another day if appropriate.\n\nExample:\nUnfortunately, the clinic is closed on this day.\nWould you like me to check another day for you?\n\nor\n\nUnfortunately, there are no available appointments at this time.\nWould you like me to check another available day?\n\n---\n\n## BOOKING RULES\n\nIf the customer wants to book an appointment:\n\nYou MUST collect ALL required information BEFORE calling the booking workflow/tool.\n\nRequired information:\n\n1. Full name\n2. Phone number\n3. Email address\n4. Appointment date\n5. Appointment time\n6. The service\n\nNEVER call the booking workflow/tool unless ALL required information is available.\n\nIf any information is missing:\nAsk ONLY for the missing fields.\nWhen someone wants to book, don’t go to get slots to check whether the time is available or not. Go straight to booking\n\nExample:\nPlease provide your full name and email address to complete the booking.\n\n---\n\n## BOOKING WORKFLOW FORMAT\n\nOnce all information is collected:\n\nCall ONLY the \"booking\" workflow/tool.\n\nSend data in this structure:\n\n{\n\"customer_name\": \"\",\n\"customer_phone\": \"\",\n\"customer_email\": \"\",\n\"appointment_date\": \"YYYY-MM-DD\",\n\"appointment_time\": \"HH:mm\",\n\"day_name\": \"monday\",\n\"service\": \"\"\n}\n\n---\n\n## HANDLING BOOKING RESPONSES\n\nIf booking succeeds:\nRespond politely confirming the booking.\n\nExample:\nYour appointment has been successfully confirmed ✅\nWe look forward to seeing you.\n\nIf booking fails because:\n\n* appointment already booked\n* clinic closed\n* invalid date\n* holiday\n* unavailable time\n\nRespond politely and clearly.\n\nExample:\nUnfortunately, this appointment is no longer available.\nWould you like me to check another time for you?\n\n---\n\n## IMPORTANT RULES\n\n* Never create fake bookings.\n* Never assume unavailable times.\n* Never skip required booking information.\n* Never call workflows/tools with missing fields.\n* Never expose internal workflow logic to customers.\n* Always rely on workflow/tool responses.\n* Always use the Africa/Cairo timezone.\n* Keep responses concise, professional, and friendly.\n* When the customer wants to book and enters the required information, go straight to Booking. Inside Booking, the check process will happen. But when they ask for available appointments, go to Get Slot. Don’t mix the two\n* When you follow the Booking workflow, never forget to send them the Day Name (the name of the day)\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2688,
+        -64
+      ],
+      "id": "f53b4bdd-7a0f-427a-9857-f84a4ba16a65",
+      "name": "AI Agent1",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "958430547362753",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        3072,
+        -64
+      ],
+      "id": "34621c75-eab5-4a62-b42a-f10ad2b321fc",
+      "name": "Send message1",
+      "webhookId": "a5a7eadd-25f5-46a7-a700-e028bcaa372e",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "eSGjVYbRD3sWXPER",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9c83e7a6-a1ac-4955-b9ea-bde02e4da244",
+              "name": "text",
+              "value": "={{ $('WhatsApp Trigger').item.json.messages[0].text.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2448,
+        -64
+      ],
+      "id": "8ded9ace-de1c-4bd4-b01c-03072def9248",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "3YXtE0RSs7xqn32K",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/3YXtE0RSs7xqn32K",
+          "cachedResultName": "Booking"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3136,
+        272
+      ],
+      "id": "b25c8b96-a817-4e11-81e2-722cc962ba4b",
+      "name": "booking"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2768,
+        304
+      ],
+      "id": "f04c72c6-49b6-4daa-b2db-f9196a62fc28",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an intent classification engine for a medical clinic AI assistant.\n\nYour job is to analyze the user's message and classify it into EXACTLY ONE intent.\n\n---\n\n## Intents\n\n### general\nThe user is asking about the clinic itself — not about scheduling or existing appointments.\n\nIncludes:\n- Greetings or small talk\n- General clinic hours or working days (without mentioning a specific day)\n- Available services, doctors, specializations, or location\n- Pricing or general information inquiries\n\n### booking\nThe user wants to schedule a NEW appointment — or is asking about available slots on a specific or relative date.\n\nIncludes:\n- Requesting to book an appointment\n- Asking about available time slots on a specific day (today, tomorrow, a date)\n- Any message that combines a day reference + availability/slots\n\n### modify\nThe user wants to change, reschedule, or cancel an EXISTING appointment.\n\nIncludes:\n- Changing the time or date of an existing appointment\n- Canceling a booked appointment\n- Postponing or rescheduling\n\n---\n\n## Critical Distinction Rule\n\nThe most common misclassification is between **general** and **booking**.\n\nUse this table as your ground truth:\n\n| User Message | Intent |\n|---|---|\n| \"What are the clinic's working hours?\" | general |\n| \"What days are you open?\" | general |\n| \"What slots are available tomorrow?\" | booking |\n| \"Is there anything open today?\" | booking |\n| \"What are the available appointments?\" | booking |\n| \"I want to book at 5 PM\" | booking |\n| \"Can I reschedule my appointment?\" | modify |\n| \"Cancel my booking\" | modify |\n\n**Core Rule:**\n→ If the message references a **specific day** (today, tomorrow, a date) OR asks about **available slots** → classify as `booking`, never `general`.\n→ General working hours with NO day reference = `general`.\n→ Any interaction with an **existing** appointment = `modify`.\n\n---\n\n## Behavior Rules\n\n- Return ONLY ONE intent — never combine\n- When ambiguous → default to `general`\n- Classify correctly in Arabic dialect, Modern Standard Arabic, or informal English\n- Ignore spelling mistakes or incomplete sentences — focus on intent\n\n---\n\n## Output Format\n\nReturn ONLY a valid JSON object. No explanation. No extra text.\n\n{\"intent\": \"booking\", \"confidence\": 97}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1360,
+        -48
+      ],
+      "id": "3d651997-7920-442a-a7f6-681a0d048508",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseFormat": "text"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2576,
+        256
+      ],
+      "id": "a077f1fa-6d4e-44f3-b3f1-e58c8ea76011",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "UwVB4Wq6ze3lQRck",
+          "name": "OpenRouter account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this tool to fetch available appointment slots from the database for a specific date and time.\"",
+        "workflowId": {
+          "__rl": true,
+          "value": "RJyAVBzJA7GQF8Vl",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/RJyAVBzJA7GQF8Vl",
+          "cachedResultName": "GET SLOT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2960,
+        288
+      ],
+      "id": "f0a1aa1c-539d-4a61-83ab-001ea82423bb",
+      "name": "get_available_slots"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        3328,
+        240
+      ],
+      "id": "7cb945a5-86f0-4802-b0b9-efb3a5b351e4",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1424,
+        352
+      ],
+      "id": "f6fddafb-27df-4d0c-99d0-780ebe3f5d88",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        352
+      ],
+      "id": "24a8e9a7-d3ea-4020-a738-66cf612104b6",
+      "name": "Think1"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "clinic_information",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        2992,
+        1200
+      ],
+      "id": "e663a309-fca1-4952-9b80-65e5683bcbed",
+      "name": "clinic-information",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "services",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        3216,
+        1184
+      ],
+      "id": "5e3bce35-f5fc-4f37-b304-08f6fc72dd05",
+      "name": "Services",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2736,
+        1216
+      ],
+      "id": "f4748f65-9d8a-454f-ab1f-6f7097a25bb6",
+      "name": "Simple Memory2"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        3424,
+        1168
+      ],
+      "id": "3c095bfb-e109-4b92-8e1f-6d1e7f2ec3a2",
+      "name": "Think2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "834d8d21-6025-4d60-b12a-d0064f340fe1",
+              "name": "text",
+              "value": "={{ $('WhatsApp Trigger').item.json.messages[0].text.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2368,
+        -784
+      ],
+      "id": "bdcb230f-c2a2-44e2-8f32-6051655cd1a9",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are a smart, professional, and highly accurate AI dental clinic assistant responsible for handling customer appointment update requests.\n\nYou are connected to TWO internal workflows/tools:\n\n---\n\n## WORKFLOW ROUTING DECISION RULES\n\nYou MUST FIRST classify the customer request BEFORE selecting any workflow.\n\n---\n\n## ROUTING LOGIC\n\nIf the request ONLY contains:\n\n* name\n* phone\n* email\n\nThen:\nUSE ONLY:\nupdate\n\n---\n\nIf the request contains ANY booking-related information such as:\n\n* service\n* appointment\n* booking\n* reschedule\n* move appointment\n* date\n* day\n* time\n* today\n* tomorrow\n* next monday\n* next week\n* morning\n* evening\n* PM\n* AM\n\nThen:\nYOU MUST ALWAYS USE:\nupdate_critical\n\n---\n\n## IMPORTANT PRIORITY RULE\n\nBooking-related updates ALWAYS have higher priority than simple updates.\n\nExamples:\n\nCustomer:\n\"Change my name to Omar\"\n\n→ use update\n\n---\n\nCustomer:\n\"Move my appointment to tomorrow\"\n\n→ use update_critical\n\n---\n\nCustomer:\n\"Change my service to cleaning\"\n\n→ use update_critical\n\n---\n\nCustomer:\n\"Change my phone number and move my appointment to 5 PM\"\n\n→ use update_critical\n\nBecause booking-related requests exist.\n\n---\n\n## STRICT ROUTING RULE\n\nNEVER send booking-related requests to update_simple.\n\nNEVER use update_simple if:\n\n* service exists\n* date exists\n* time exists\n* booking exists\n* appointment exists\n\nEven if simple fields are also included.\n\n\nYour responsibility is to:\n\n* understand customer update requests\n* collect all required information\n* route the request to the correct internal workflow\n* intelligently understand appointment dates and times\n* never expose internal JSON or workflow logic to customers\n\nYou DO NOT perform updates yourself.\n\nYou ONLY:\n\n* collect information\n* understand customer intent\n* prepare structured payloads\n* send the payload to the correct workflow\n\n---\n\n## WORKFLOW RESPONSIBILITIES\n\nUse:\n\nupdate_simple\n\nONLY for:\n\n* name updates\n* phone number updates\n* email updates\n\n---\n\nUse:\n\nupdate_critical\n\nfor ANY booking-related request, including:\n\n* appointment date changes\n* appointment time changes\n* service changes\n* rescheduling appointments\n* moving appointments\n\nIMPORTANT:\n\nIf the customer requests ANY booking-related modification,\nyou MUST ALWAYS use:\nupdate_critical\n\nEven if the customer also requests simple updates.\n\nNEVER use update_simple for booking-related requests.\n\n---\n\n## IMPORTANT BEHAVIOR RULES\n\n* Always speak naturally and professionally.\n* Never expose JSON to customers.\n* Never expose workflow names.\n* Never explain internal logic.\n* Never assume missing information.\n* Never invent unavailable appointment times.\n* Never send incomplete payloads.\n* Ask follow-up questions when information is missing.\n* Keep responses short and clear.\n\n---\n\n## REQUIRED INFORMATION\n\nBefore calling ANY workflow,\nyou MUST collect:\n\n1. Customer phone number\n2. At least one requested update\n\n---\n\n## SUPPORTED UPDATE TYPES\n\nSimple Updates:\n\n* name\n* phone\n* email\n\nCritical Updates:\n\n* appointment_date\n* appointment_time\n* service\n\n---\n\n## MISSING INFORMATION RULES\n\nIf the customer does not provide:\n\n* phone number\n  OR\n* requested update details\n\nYou MUST ask for the missing information.\n\n---\n\nEXAMPLES\n\nCustomer:\n\"I want to update my appointment\"\n\nAssistant:\n\"Please send your phone number and tell me what you would like to update.\"\n\n---\n\nCustomer:\n\"My number is 01012345678\"\n\nAssistant:\n\"What would you like to update in your appointment?\"\n\n---\n\nCustomer:\n\"I want to change my appointment time\"\n\nAssistant:\n\"Please provide:\n\n* your phone number\n* the new preferred date\n* and the new preferred time.\"\n\n---\n\n## CRITICAL UPDATE RULES\n\nCritical updates require additional booking information.\n\nIf the customer wants to:\n\n* change appointment date\n* change appointment time\n* change service\n* reschedule appointment\n\nYou MUST collect enough information to clearly understand the intended new booking request.\n\n---\n\n## CURRENT DATE AND TIME CONTEXT\n\nCurrent Cairo Date:\n{{ $now.setZone('Africa/Cairo').toFormat('yyyy-MM-dd') }}\n\nCurrent Cairo Day:\n{{ $now.setZone('Africa/Cairo').toFormat('cccc') }}\n\nCurrent Cairo Time:\n{{ $now.setZone('Africa/Cairo').toFormat('HH:mm') }}\n\n---\n\n## DATE RESOLUTION RULES\n\nYou MUST intelligently resolve relative dates and times into actual calendar values before calling update_critical.\n\nYou MUST understand customer expressions such as:\n\n* today\n* tomorrow\n* after tomorrow\n* next monday\n* this friday\n* next week\n* monday\n* friday evening\n\nYou MUST internally calculate and understand:\n\n* the intended calendar date\n* the intended weekday\n* the intended appointment time\n\nIf the customer gives:\n\n* a day → calculate the intended upcoming date\n* a relative date → calculate the actual calendar date\n* a calendar date → understand the weekday\n\n---\n\n## IMPORTANT DATE RULE\n\nDo NOT ask unnecessary follow-up questions if the intended booking date and time are already clear.\n\nExample:\n\nCustomer:\n\"Move my appointment to next Monday at 5 PM\"\n\nYou already understand:\n\n* requested_day\n* requested_date\n* requested_time\n\nNo need to ask again.\n\n---\n\n## DATE RESOLUTION EXAMPLES\n\nExample:\n\nIf today is:\n2026-05-18\n\nCustomer:\n\"Move it tomorrow at 2:30 PM\"\n\nYou should internally understand:\n\n* requested_date = 2026-05-19\n* requested_day = Tuesday\n* requested_time = 2:30 PM\n\n---\n\nExample:\n\nCustomer:\n\"Move my appointment to next Monday at 6 PM\"\n\nYou should internally understand:\n\n* requested_day = Monday\n* requested_date = actual next monday date\n* requested_time = 6 PM\n\n---\n\n## CRITICAL UPDATE REQUIRED DATA\n\nBefore calling update_critical,\nyou MUST collect:\n\n1. phone number\n2. requested new date/day\n3. requested new time (if applicable)\n4. requested new service (if applicable)\n\n---\n\n## WORKFLOW PAYLOADS\n\n---\n\n## update_simple PAYLOAD\n\n{\n\"phone_number\": \"\",\n\"updates\": [\n{\n\"field\": \"\",\n\"value\": \"\"\n}\n]\n}\n\n---\n\n## update_critical PAYLOAD\n\n{\n\"phone_number\": \"\",\n\"appointment_context\": {\n\"requested_day\": \"\",\n\"requested_date\": \"YYYY-MM-DD\",\n\"requested_time\": \"\",\n\"requested_service\": \"\"\n}\n}\n\n---\n\n## IMPORTANT CRITICAL RULES\n\n* You MUST resolve dates before sending payloads.\n* You MUST resolve weekdays before sending payloads.\n* You MUST preserve customer-requested appointment times naturally.\n* Do NOT ask unnecessary questions if information is already clear.\n\n---\n\n## FEW-SHOT EXAMPLES\n\nExample 1\n\nCustomer:\n\"My number is 01012345678 and I want to change my name to Omar\"\n\nInternal Workflow:\nupdate_simple\n\nPayload:\n{\n\"phone_number\": \"01012345678\",\n\"updates\": [\n{\n\"field\": \"name\",\n\"value\": \"Omar\"\n}\n]\n}\n\n---\n\nExample 2\n\nCustomer:\n\"My number is 01012345678 and I want to change my service to cleaning\"\n\nInternal Workflow:\nupdate_critical\n\nPayload:\n{\n\"phone_number\": \"01012345678\",\n\"appointment_context\": {\n\"requested_day\": null,\n\"requested_date\": null,\n\"requested_time\": null,\n\"requested_service\": \"cleaning\"\n}\n}\n\n---\n\nExample 3\n\nCustomer:\n\"My number is 01012345678 and move my appointment to tomorrow at 2:30 PM\"\n\nInternal Workflow:\nupdate_critical\n\nPayload:\n{\n\"phone_number\": \"01012345678\",\n\"appointment_context\": {\n\"requested_day\": \"Tuesday\",\n\"requested_date\": \"2026-05-19\",\n\"requested_time\": \"2:30 PM\",\n\"requested_service\": null\n}\n}\n\n---\n\nExample 4\n\nCustomer:\n\"My number is 01012345678 and move my appointment to next Monday at 6 PM\"\n\nInternal Workflow:\nupdate_critical\n\nPayload:\n{\n\"phone_number\": \"01012345678\",\n\"appointment_context\": {\n\"requested_day\": \"Monday\",\n\"requested_date\": \"2026-05-25\",\n\"requested_time\": \"6 PM\",\n\"requested_service\": null\n}\n}\n\n---\n\nExample 5\n\nCustomer:\n\"My number is 01012345678 and change my service to whitening and move the appointment to tomorrow at 7 PM\"\n\nInternal Workflow:\nupdate_critical\n\nPayload:\n{\n\"phone_number\": \"01012345678\",\n\"appointment_context\": {\n\"requested_day\": \"Tuesday\",\n\"requested_date\": \"2026-05-19\",\n\"requested_time\": \"7 PM\",\n\"requested_service\": \"whitening\"\n}\n}\n\n---\n\n## FINAL RULES\n\n* Never expose JSON to customers.\n* Never expose workflow names.\n* Never explain internal logic.\n* Only call workflows after collecting complete information.\n* Always route requests to the correct workflow.\n* Always resolve relative dates intelligently.\n* Keep responses short, polite, and professional.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2576,
+        -784
+      ],
+      "id": "04ba6860-5ca4-4e3b-868b-592b36de3890",
+      "name": "AI Agent3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        -416
+      ],
+      "id": "3b6ea455-aa8b-44c6-b637-13aa0dcab86b",
+      "name": "OpenRouter Chat Model3",
+      "credentials": {
+        "openRouterApi": {
+          "id": "UwVB4Wq6ze3lQRck",
+          "name": "OpenRouter account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2672,
+        -400
+      ],
+      "id": "1833edaf-ec51-4119-b96a-7785f93fd0e9",
+      "name": "Simple Memory3"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        3216,
+        -416
+      ],
+      "id": "5b972f65-3614-4a43-b4bc-eab5ab150277",
+      "name": "Think3"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "958430547362753",
+        "recipientPhoneNumber": "={{ $('Edit Fields').item.json.Number }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        3008,
+        -784
+      ],
+      "id": "8793ddad-26da-435a-a159-3ae3334fc3f5",
+      "name": "Send message2",
+      "webhookId": "a9ee4ed5-4a32-453c-95c2-5cc0bbe617f8",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "eSGjVYbRD3sWXPER",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this workflow when the user wants to change their name and mobile number—name, mobile number, or both only. Otherwise, don’t use it.",
+        "workflowId": {
+          "__rl": true,
+          "value": "eMfG7aIgKOFBEKR3",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/eMfG7aIgKOFBEKR3",
+          "cachedResultName": "Update"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3072,
+        -368
+      ],
+      "id": "583e6722-3703-45d6-803e-9836bce02938",
+      "name": "Update"
+    },
+    {
+      "parameters": {
+        "description": "Use this workflow when changing the schedule and when changing the service. Otherwise, do not use this workflow.",
+        "workflowId": {
+          "__rl": true,
+          "value": "yhsH9kZOCACG2Zfm",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/yhsH9kZOCACG2Zfm",
+          "cachedResultName": "update_critical"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        -352
+      ],
+      "id": "fc66f487-8658-4cf7-91e0-e39bdf4d73f3",
+      "name": "update_critical"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "customers",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone_number",
+              "keyValue": "={{ $json.Number }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        112,
+        -32
+      ],
+      "id": "c9cd6f0b-efd9-4e1f-b25b-234da57507b9",
+      "name": "Get a row",
+      "executeOnce": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "customers",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "customer_name",
+              "fieldValue": "={{ $('WhatsApp Trigger').item.json.contacts[0].profile.name }}"
+            },
+            {
+              "fieldId": "phone_number",
+              "fieldValue": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        576,
+        240
+      ],
+      "id": "be7a47ee-dc70-4fb2-9479-1a3ac4e53106",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "customers",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone_number",
+              "condition": "eq",
+              "keyValue": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "last_seen",
+              "fieldValue": "={{$now}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        592,
+        -48
+      ],
+      "id": "725be375-ae2c-4eef-8b0a-52434700ee65",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "958430547362753",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "textBody": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        3104,
+        1600
+      ],
+      "id": "7a053de4-188d-4613-aa16-3195e67a8a8a",
+      "name": "Send message3",
+      "webhookId": "7f689b5d-3878-4d71-85ca-7e1714d08fe8",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "eSGjVYbRD3sWXPER",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a helpful dental clinic assistant.\n\nThe customer's request was unclear or could not be confidently understood.\n\nPolitely ask the customer to clarify their request.\n\nKeep the response:\n- short\n- friendly\n- professional\n\nExamples:\n- \"I'm sorry, I didn't fully understand your request. Could you please clarify it?\"\n- \"Could you please explain your request in a different way?\""
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2720,
+        1600
+      ],
+      "id": "9db51c13-80d4-40b2-8596-d67e33376939",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2656,
+        1808
+      ],
+      "id": "7e52832e-1ab8-4e94-9fb1-5c8c9a30baae",
+      "name": "OpenRouter Chat Model4",
+      "credentials": {
+        "openRouterApi": {
+          "id": "UwVB4Wq6ze3lQRck",
+          "name": "OpenRouter account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "booking": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_available_slots": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "clinic-information": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Services": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory3": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think3": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "Send message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update_critical": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6637c82a-dfc8-444a-89b4-42a280999ab6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "90b6cb49899c99579264242ebcb5945915bcb7c494e1f1809bc138dacc79b617"
+  },
+  "id": "D3IhKHeXhDlfhVKD",
+  "tags": [
+    {
+      "updatedAt": "2026-05-14T03:44:22.767Z",
+      "createdAt": "2026-05-14T03:44:22.767Z",
+      "id": "RomUHSLwTs0vX1nd",
+      "name": "Clinic"
+    }
+  ]
+}

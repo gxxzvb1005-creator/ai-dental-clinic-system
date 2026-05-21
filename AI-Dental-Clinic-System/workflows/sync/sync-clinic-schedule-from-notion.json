@@ -1,0 +1,290 @@
+{
+  "name": "sync-clinic-schedule-from-notion",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 3,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "event": "pagedUpdatedInDatabase",
+        "databaseId": {
+          "__rl": true,
+          "value": "28d0a819-e8bb-46b2-ae88-6177df82936b",
+          "mode": "list",
+          "cachedResultName": "📅 Clinic Schedule",
+          "cachedResultUrl": "https://www.notion.so/28d0a819e8bb46b2ae886177df82936b"
+        }
+      },
+      "type": "n8n-nodes-base.notionTrigger",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -48
+      ],
+      "id": "e2fd742a-d5c0-4450-9734-675a3f5c4f68",
+      "name": "Notion Trigger",
+      "credentials": {
+        "notionApi": {
+          "id": "KdxHZXDSeMFuu1Ew",
+          "name": "Notion account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinic_schedule",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "notion_id",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -48
+      ],
+      "id": "9104f6c3-0d17-4fd4-a941-bcdd8dc6e0fa",
+      "name": "Get a row",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "76619acc-2d48-4850-b37f-842bf4aed9fa",
+              "leftValue": "={{ $json.notion_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        288,
+        -48
+      ],
+      "id": "b8ae7d78-6789-455a-944f-2cba9bcac746",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const convertTime = (timeStr) => {\n    if (!timeStr || timeStr.trim() === '') return null;\n    const date = new Date(`1970-01-01 ${timeStr}`);\n    if (isNaN(date.getTime())) return null; // ← الإضافة المهمة\n    return date.toTimeString().slice(0, 8);\n  };\n\n  item.json.property_start_time = convertTime(item.json.property_start_time);\n  item.json.property_end_time = convertTime(item.json.property_end_time);\n\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        -128
+      ],
+      "id": "0ee0c65d-ea44-4db7-8b44-f97f8e6f0b2d",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "clinic_schedule",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "notion_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.notion_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "notion_id",
+              "fieldValue": "={{ $json.notion_id }}"
+            },
+            {
+              "fieldId": "day_of_week",
+              "fieldValue": "={{ $json.day_of_week }}"
+            },
+            {
+              "fieldId": "start_time",
+              "fieldValue": "={{ $json.start_time }}"
+            },
+            {
+              "fieldId": "end_time",
+              "fieldValue": "={{ $json.end_time }}"
+            },
+            {
+              "fieldId": "active",
+              "fieldValue": "={{ $json.active }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -128
+      ],
+      "id": "d99b8b1f-2c51-454e-8fcc-a055b0629180",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "clinic_schedule",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "notion_id",
+              "fieldValue": "={{ $('Notion Trigger').item.json.id }}"
+            },
+            {
+              "fieldId": "day_of_week",
+              "fieldValue": "={{ $('Notion Trigger').item.json['Day of Week'] }}"
+            },
+            {
+              "fieldId": "start_time",
+              "fieldValue": "={{ $('Notion Trigger').item.json['Start Time'] }}"
+            },
+            {
+              "fieldId": "end_time",
+              "fieldValue": "={{ $('Notion Trigger').item.json['End Time'] }}"
+            },
+            {
+              "fieldId": "active",
+              "fieldValue": "={{ $('Notion Trigger').item.json.Active }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        656,
+        144
+      ],
+      "id": "3f46e40e-bcce-4001-8ac3-fd2e7aa7468a",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IXxy4GFY1ZNTJ2e2",
+          "name": "Supabase account 5"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Notion Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c5afcd07-2ca4-4313-9151-7057cdcff1cf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "90b6cb49899c99579264242ebcb5945915bcb7c494e1f1809bc138dacc79b617"
+  },
+  "id": "joq2YnYRVODKIemb",
+  "tags": [
+    {
+      "updatedAt": "2026-05-14T03:44:22.767Z",
+      "createdAt": "2026-05-14T03:44:22.767Z",
+      "id": "RomUHSLwTs0vX1nd",
+      "name": "Clinic"
+    }
+  ]
+}
