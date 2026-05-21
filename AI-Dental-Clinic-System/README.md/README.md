@@ -1,4 +1,4 @@
-<div align="center">
+div align="center">
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=00D9FF&center=true&vCenter=true&width=700&lines=%F0%9F%A6%B7+AI+Dental+Clinic+System;Intelligent+Appointment+Automation;WhatsApp+%2B+AI+%2B+n8n+%2B+Supabase" alt="Typing SVG" />
 <br/>
 <img src="https://img.shields.io/badge/Status-Production%20Ready-00D9FF?style=for-the-badge&logo=checkmarx&logoColor=white"/>
@@ -244,8 +244,8 @@ Notion Dashboard (Staff)
  
 <h3>Main Router</h3>
  
-<a href="./assets/main-router.png">
-  <img src="./assets/main-router.png" width="860" alt="Main Router"/>
+<a href="../assets/main-router.png">
+  <img src="../assets/main-router.png" width="860" alt="Main Router"/>
 </a>
 <br/><br/>
  
@@ -258,13 +258,13 @@ Notion Dashboard (Staff)
   </tr>
   <tr>
     <td align="center">
-      <a href="./assets/booking-get-available-slots.png">
-        <img src="./assets/booking-get-available-slots.png" width="420" alt="Available Slots"/>
+      <a href="../assets/booking-get-available-slots.png">
+        <img src="../assets/booking-get-available-slots.png" width="420" alt="Available Slots"/>
       </a>
     </td>
     <td align="center">
-      <a href="./assets/booking-create-appointment.png">
-        <img src="./assets/booking-create-appointment.png" width="420" alt="Create Appointment"/>
+      <a href="../assets/booking-create-appointment.png">
+        <img src="../assets/booking-create-appointment.png" width="420" alt="Create Appointment"/>
       </a>
     </td>
   </tr>
@@ -279,13 +279,13 @@ Notion Dashboard (Staff)
   </tr>
   <tr>
     <td align="center">
-      <a href="./assets/booking-update-simple.png">
-        <img src="./assets/booking-update-simple.png" width="420" alt="Simple Update"/>
+      <a href="../assets/booking-update-simple.png">
+        <img src="../assets/booking-update-simple.png" width="420" alt="Simple Update"/>
       </a>
     </td>
     <td align="center">
-      <a href="./assets/booking-update-critical.png">
-        <img src="./assets/booking-update-critical.png" width="420" alt="Critical Update"/>
+      <a href="../assets/booking-update-critical.png">
+        <img src="../assets/booking-update-critical.png" width="420" alt="Critical Update"/>
       </a>
     </td>
   </tr>
@@ -293,8 +293,8 @@ Notion Dashboard (Staff)
 <br/>
 <h3>Notion Sync Layer</h3>
  
-<a href="./assets/sync-notion-clinic-update.png">
-  <img src="./assets/sync-notion-clinic-update.png" width="860" alt="Notion Sync"/>
+<a href="../assets/sync-notion-clinic-update.png">
+  <img src="../assets/sync-notion-clinic-update.png" width="860" alt="Notion Sync"/>
 </a>
 <br/><br/>
  
@@ -307,13 +307,13 @@ Notion Dashboard (Staff)
   </tr>
   <tr>
     <td align="center">
-      <a href="./assets/system-test-01-initial-chat.jpg">
-        <img src="./assets/system-test-01-initial-chat.jpg" width="320" alt="WhatsApp Chat 1"/>
+      <a href="../assets/system-test-01-initial-chat.jpg">
+        <img src="../assets/system-test-01-initial-chat.jpg" width="320" alt="WhatsApp Chat 1"/>
       </a>
     </td>
     <td align="center">
-      <a href="./assets/system-test-02-response-flow.jpg">
-        <img src="./assets/system-test-02-response-flow.jpg" width="320" alt="WhatsApp Chat 2"/>
+      <a href="../assets/system-test-02-response-flow.jpg">
+        <img src="../assets/system-test-02-response-flow.jpg" width="320" alt="WhatsApp Chat 2"/>
       </a>
     </td>
   </tr>
@@ -390,4 +390,3 @@ Several improvements were identified during development (marked as sticky notes 
   <img src="https://img.shields.io/badge/GitHub-Profile-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
 </a>
 </div>
- 
