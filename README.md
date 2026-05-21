@@ -50,7 +50,7 @@ AI Agent Engineer focused on building intelligent automation systems, multi-agen
 
 <p align="left">
 
-<img src="https://cdn.simpleicons.org/openai/white" alt="OpenAI" width="28" />
+<img src="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png" alt="OpenAI" width="28" />
 
 <img src="https://cdn.simpleicons.org/anthropic/white" alt="Anthropic" width="28" />
 
