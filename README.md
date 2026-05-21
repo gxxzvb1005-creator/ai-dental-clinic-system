@@ -5,15 +5,15 @@ AI Agent Engineer focused on building intelligent automation systems, multi-agen
 </p>
 
 <p>
-<a href="mailto:your-email@example.com">
+<a href="mailto:gxxzvb1005@gmail.com">
 <img src="https://img.shields.io/badge/-Email-EA4335?style=flat-square&labelColor=EA4335&logo=Gmail&logoColor=white" alt="Email Badge">
 </a>
 
-<a href="https://github.com/your-github-username">
+<a href="https://github.com/gxxzvb1005-creator">
 <img src="https://img.shields.io/badge/-GitHub-181717?style=flat-square&labelColor=181717&logo=github&logoColor=white" alt="GitHub Badge">
 </a>
 
-<a href="https://linkedin.com/in/your-linkedin">
+<a href="https://www.linkedin.com/in/omar-emad-99a919326/">
 <img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&labelColor=0077B5&logo=linkedin&logoColor=white" alt="LinkedIn Badge">
 </a>
 </p>
